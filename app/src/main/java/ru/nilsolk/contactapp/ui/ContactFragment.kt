@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.nilsolk.contactapp.R
+import ru.nilsolk.contactapp.databinding.FragmentContactBinding
 
 class ContactFragment : Fragment() {
+    private lateinit var binding: FragmentContactBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
