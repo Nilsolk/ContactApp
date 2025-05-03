@@ -24,13 +24,11 @@ class ContactManagerImpl(
             )?.use { cursor ->
                 val nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
                 val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
-                val surnameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_SOURCE)
                 while (cursor.moveToNext()) {
                     contacts.add(
                         Contact().apply {
                             name = cursor.getString(nameIndex) ?: ""
                             number = cursor.getString(numberIndex) ?: ""
-                            surname = cursor.getString(surnameIndex) ?: ""
                         }
                     )
                 }

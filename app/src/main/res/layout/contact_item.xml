@@ -10,16 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
+            android:layout_margin="4dp"
             android:id="@+id/name"
             tools:text = "Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
-            android:id="@+id/surname"
-            tools:text = "Surname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
+            android:layout_margin="4dp"
             android:id="@+id/number"
             tools:text = "Number"
             android:layout_width="wrap_content"

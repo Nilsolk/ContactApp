@@ -12,7 +12,7 @@ import ru.nilsolk.contactapp.data.ContactManagerImpl
 
 
 class ContactService : Service() {
-    private val contactManager = ContactManagerImpl(contentResolver)
+    private lateinit var contactManager:ContactManagerImpl
     val binder = object : IContactAidlInterface.Stub()
     {
         override fun getContacts(callback: IContactAidlCallback) {
@@ -27,5 +27,9 @@ class ContactService : Service() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        contactManager = ContactManagerImpl(contentResolver)
+    }
     override fun onBind(intent: Intent): IBinder = binder
 }

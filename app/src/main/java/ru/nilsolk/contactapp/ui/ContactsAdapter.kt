@@ -26,7 +26,6 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
         with(holder.viewBinding){
             number.text =  item.number
             name.text = item.name
-            surname.text = item.surname
         }
     }
 
