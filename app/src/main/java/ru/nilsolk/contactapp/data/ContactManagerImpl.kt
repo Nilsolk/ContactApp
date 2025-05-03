@@ -6,7 +6,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.nilsolk.contactapp.Contact
 
-class ContactManagerImpl(private val contentResolver: ContentResolver):ContactManager {
+class ContactManagerImpl(
+    private val contentResolver: ContentResolver
+):ContactManager {
     override suspend fun fetchContacts(): MutableList<Contact> {
         return withContext(Dispatchers.IO) {
             val contacts = mutableListOf<Contact>()

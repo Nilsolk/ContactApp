@@ -13,7 +13,7 @@ import ru.nilsolk.contactapp.data.ContactManagerImpl
 
 class ContactService : Service() {
     private val contactManager = ContactManagerImpl(contentResolver)
-    private val binder = object : IContactAidlInterface.Stub()
+    val binder = object : IContactAidlInterface.Stub()
     {
         override fun getContacts(callback: IContactAidlCallback) {
             CoroutineScope(Dispatchers.IO).launch {
