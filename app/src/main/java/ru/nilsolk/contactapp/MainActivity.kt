@@ -12,13 +12,17 @@ import ru.nilsolk.contactapp.ui.ContactFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val contactsPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val isReadGranted = permissions[Manifest.permission.READ_CONTACTS] == true
+        val isWriteGranted = permissions[Manifest.permission.WRITE_CONTACTS] == true
+
+        if (isReadGranted && isWriteGranted) {
             showContactFragment()
         } else {
-            Toast.makeText(this, "Error loading", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Необходимо разрешение для загрузки контактов", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -26,29 +30,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        checkPermission()
+        checkPermissions()
     }
 
-    private fun checkPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                showContactFragment()
-            }
-            else -> {
-                requestContactsPermission()
-            }
+    private fun checkPermissions() {
+        val isReadGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_CONTACTS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val isWriteGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_CONTACTS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (isReadGranted && isWriteGranted) {
+            showContactFragment()
+        } else {
+            permissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.READ_CONTACTS,
+                    Manifest.permission.WRITE_CONTACTS
+                )
+            )
         }
-    }
-
-    private fun requestContactsPermission() {
-        contactsPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
     }
 
     private fun showContactFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, ContactFragment()).commit()
+            .replace(R.id.fragment_container, ContactFragment())
+            .commit()
     }
 }
+

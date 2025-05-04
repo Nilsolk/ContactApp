@@ -28,6 +28,11 @@ class ContactViewModel : ViewModel() {
             _contacts.postValue(mapper.mapList(contacts))
         }
 
+        override fun onRemovedDublicates(contacts: MutableList<Contact>) {
+            val mapper = ContactMapper()
+            _contacts.postValue(mapper.mapList(contacts))
+        }
+
         override fun onError(error: String) {
             _error.postValue(error)
         }
@@ -42,6 +47,9 @@ class ContactViewModel : ViewModel() {
         override fun onServiceDisconnected(name: ComponentName?) {
             contactService = null
         }
+    }
+    fun removeDuplicates(){
+        contactService?.removeDublicates(callback)
     }
 
     fun bindService(context: Context) {

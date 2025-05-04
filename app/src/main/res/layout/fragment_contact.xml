@@ -15,7 +15,9 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/contact_item"/>
     <Button
-        android:hint="@string/app_name"
+        android:id="@+id/duplicates_button"
+        android:hint="@string/remove_duplicates"
+        android:textColorHint="@color/white"
         android:layout_margin="10dp"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"

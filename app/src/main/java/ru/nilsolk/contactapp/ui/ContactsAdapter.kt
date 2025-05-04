@@ -8,8 +8,9 @@ import ru.nilsolk.contactapp.databinding.ContactItemBinding
 class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
     private val contactList = mutableListOf<ContactModel>()
 
-    fun setList(list: List<ContactModel>){
-        contactList.addAll(list)
+    fun setList(list: List<ContactModel>) {
+        contactList.clear()
+        contactList.addAll(list.sortedBy { it.name })
         notifyItemChanged(0, list.size)
     }
 
@@ -23,8 +24,8 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
 
     override fun onBindViewHolder(holder: ContactsHolder, position: Int) {
         val item = contactList[position]
-        with(holder.viewBinding){
-            number.text =  item.number
+        with(holder.viewBinding) {
+            number.text = item.number
             name.text = item.name
         }
     }

@@ -12,16 +12,26 @@ import ru.nilsolk.contactapp.data.ContactManagerImpl
 
 
 class ContactService : Service() {
-    private lateinit var contactManager:ContactManagerImpl
-    val binder = object : IContactAidlInterface.Stub()
-    {
+    private lateinit var contactManager: ContactManagerImpl
+    private val binder = object : IContactAidlInterface.Stub() {
         override fun getContacts(callback: IContactAidlCallback) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val contacts = contactManager.fetchContacts()
                     callback.onContactsLoaded(contacts)
+                } catch (e: Exception) {
+                    callback.onError(e.message ?: "Unknown error!");
+                }
+            }
+        }
+
+        override fun removeDublicates(callback: IContactAidlCallback) {
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val contactsWithoutDuplicate = contactManager.removeDuplicates()
+                    callback.onRemovedDublicates(contactsWithoutDuplicate)
                 } catch(e:Exception){
-                    callback.onError(e.message?:"Unknown error!");
+                    callback.onError(e.message ?: "Fail remove!")
                 }
             }
         }
@@ -31,5 +41,6 @@ class ContactService : Service() {
         super.onCreate()
         contactManager = ContactManagerImpl(contentResolver)
     }
+
     override fun onBind(intent: Intent): IBinder = binder
 }

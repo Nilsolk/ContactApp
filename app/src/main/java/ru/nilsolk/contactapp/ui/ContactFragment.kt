@@ -29,6 +29,12 @@ class ContactFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupObservers()
+
+        binding.duplicatesButton.setOnClickListener{
+            viewModel.removeDuplicates()
+            contactAdapter.notifyDataSetChanged()
+        }
+
     }
 
     private fun setupRecyclerView() {
@@ -41,6 +47,7 @@ class ContactFragment : Fragment() {
     private fun setupObservers() {
         viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
             contactAdapter.setList(contacts)
+            contactAdapter.notifyDataSetChanged()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
