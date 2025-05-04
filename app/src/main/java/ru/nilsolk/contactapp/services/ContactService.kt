@@ -25,11 +25,16 @@ class ContactService : Service() {
             }
         }
 
-        override fun removeDublicates(callback: IContactAidlCallback) {
+        override fun removeDuplicates(callback: IContactAidlCallback) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val contactsWithoutDuplicate = contactManager.removeDuplicates()
-                    callback.onRemovedDublicates(contactsWithoutDuplicate)
+                    val contactsWithoutDuplicate = (contactManager.removeDuplicates()).first
+                    val countOfRemoved = (contactManager.removeDuplicates()).second
+                    if (countOfRemoved!= 0) {
+                        callback.onRemovedDuplicates(contactsWithoutDuplicate)
+                    } else {
+                        callback.DuplicatesNotFound()
+                    }
                 } catch(e:Exception){
                     callback.onError(e.message ?: "Fail remove!")
                 }

@@ -10,7 +10,7 @@ import ru.nilsolk.contactapp.Contact
 
 class ContactManagerImpl(
     private val contentResolver: ContentResolver
-):ContactManager {
+) : ContactManager {
     override suspend fun fetchContacts(): MutableList<Contact> {
         return withContext(Dispatchers.IO) {
             val contacts = mutableListOf<Contact>()
@@ -24,16 +24,19 @@ class ContactManagerImpl(
                 projection,
                 null, null, null
             )?.use { cursor ->
-                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
-                val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-                val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                val idIndex =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
+                val nameIndex =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                val numberIndex =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                 while (cursor.moveToNext()) {
                     contacts.add(
                         Contact().apply {
                             id = cursor.getString(idIndex) ?: ""
                             name = cursor.getString(nameIndex) ?: ""
                             number = cursor.getString(numberIndex) ?: ""
-                            Log.d("Element",name)
+                            Log.d("Element", name)
                         }
                     )
                 }
@@ -42,9 +45,10 @@ class ContactManagerImpl(
         }
     }
 
-    override suspend fun removeDuplicates(): MutableList<Contact> {
+    override suspend fun removeDuplicates(): Pair<MutableList<Contact>, Int> {
         return withContext(Dispatchers.IO) {
             val uniqueContactsMap = HashMap<String, Contact>()
+            var countOfRemoved = 0
             val projection = arrayOf(
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
@@ -55,9 +59,12 @@ class ContactManagerImpl(
                 projection,
                 null, null, null
             )?.use { cursor ->
-                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
-                val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
-                val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                val idIndex =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
+                val nameIndex =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                val numberIndex =
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
 
                 while (cursor.moveToNext()) {
                     val contact = Contact().apply {
@@ -72,16 +79,18 @@ class ContactManagerImpl(
                     } else {
                         val contactIdToDelete = cursor.getString(idIndex)
                         deleteContactById(contactIdToDelete)
+                        countOfRemoved++
                     }
                 }
             }
 
-            uniqueContactsMap.values.toMutableList()
+            Pair(uniqueContactsMap.values.toMutableList(), countOfRemoved)
         }
     }
 
     override suspend fun deleteContactById(contactId: String) {
-        val contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId.toLong())
+        val contactUri =
+            ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId.toLong())
         contentResolver.delete(contactUri, null, null)
     }
 

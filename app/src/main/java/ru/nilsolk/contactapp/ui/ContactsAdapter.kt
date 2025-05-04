@@ -3,6 +3,7 @@ package ru.nilsolk.contactapp.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import ru.nilsolk.contactapp.data.ContactModel
 import ru.nilsolk.contactapp.databinding.ContactItemBinding
 
 class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {

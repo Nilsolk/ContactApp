@@ -30,7 +30,7 @@ class ContactFragment : Fragment() {
         setupRecyclerView()
         setupObservers()
 
-        binding.duplicatesButton.setOnClickListener{
+        binding.duplicatesButton.setOnClickListener {
             viewModel.removeDuplicates()
             contactAdapter.notifyDataSetChanged()
         }
@@ -48,10 +48,16 @@ class ContactFragment : Fragment() {
         viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
             contactAdapter.setList(contacts)
             contactAdapter.notifyDataSetChanged()
+            Toast.makeText(requireContext(), "Success removed duplicates", Toast.LENGTH_SHORT)
+                .show()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.status.observe(viewLifecycleOwner) { mes ->
+            Toast.makeText(requireContext(), mes, Toast.LENGTH_LONG).show()
         }
     }
 

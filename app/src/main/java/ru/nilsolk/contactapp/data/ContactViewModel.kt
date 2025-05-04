@@ -1,3 +1,4 @@
+
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -9,9 +10,9 @@ import androidx.lifecycle.ViewModel
 import ru.nilsolk.contactapp.Contact
 import ru.nilsolk.contactapp.IContactAidlCallback
 import ru.nilsolk.contactapp.IContactAidlInterface
+import ru.nilsolk.contactapp.data.ContactModel
 import ru.nilsolk.contactapp.data.mapper.ContactMapper
 import ru.nilsolk.contactapp.services.ContactService
-import ru.nilsolk.contactapp.ui.ContactModel
 
 class ContactViewModel : ViewModel() {
     private var contactService: IContactAidlInterface? = null
@@ -22,16 +23,24 @@ class ContactViewModel : ViewModel() {
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    private val _status = MutableLiveData<String>()
+    val status: LiveData<String> = _status
+
     private val callback = object : IContactAidlCallback.Stub() {
         override fun onContactsLoaded(contacts: MutableList<Contact>) {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
         }
 
-        override fun onRemovedDublicates(contacts: MutableList<Contact>) {
+        override fun onRemovedDuplicates(contacts: MutableList<Contact>) {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
         }
+
+        override fun DuplicatesNotFound() {
+            _status.postValue("Duplicates not found!")
+        }
+
 
         override fun onError(error: String) {
             _error.postValue(error)
@@ -49,7 +58,7 @@ class ContactViewModel : ViewModel() {
         }
     }
     fun removeDuplicates(){
-        contactService?.removeDublicates(callback)
+        contactService?.removeDuplicates(callback)
     }
 
     fun bindService(context: Context) {
