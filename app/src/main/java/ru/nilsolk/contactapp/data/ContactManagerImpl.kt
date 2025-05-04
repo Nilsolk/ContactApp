@@ -3,6 +3,7 @@ package ru.nilsolk.contactapp.data
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.provider.ContactsContract
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.nilsolk.contactapp.Contact
@@ -14,7 +15,8 @@ class ContactManagerImpl(
         return withContext(Dispatchers.IO) {
             val contacts = mutableListOf<Contact>()
             val projection = arrayOf(
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER
             )
             contentResolver.query(
@@ -22,13 +24,16 @@ class ContactManagerImpl(
                 projection,
                 null, null, null
             )?.use { cursor ->
-                val nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)
+                val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                 val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                 while (cursor.moveToNext()) {
                     contacts.add(
                         Contact().apply {
+                            id = cursor.getString(idIndex) ?: ""
                             name = cursor.getString(nameIndex) ?: ""
                             number = cursor.getString(numberIndex) ?: ""
+                            Log.d("Element",name)
                         }
                     )
                 }
@@ -41,8 +46,8 @@ class ContactManagerImpl(
         return withContext(Dispatchers.IO) {
             val uniqueContactsMap = HashMap<String, Contact>()
             val projection = arrayOf(
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER
             )
             contentResolver.query(
@@ -50,15 +55,15 @@ class ContactManagerImpl(
                 projection,
                 null, null, null
             )?.use { cursor ->
-                val idIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID)
-                val nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
+                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)
+                val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                 val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
 
                 while (cursor.moveToNext()) {
                     val contact = Contact().apply {
                         id = cursor.getString(idIndex) ?: ""
                         name = cursor.getString(nameIndex) ?: ""
-                        number = cursor.getString(numberIndex)?.replace("\\s|-|\\(|\\)".toRegex(), "") ?: ""
+                        number = cursor.getString(numberIndex) ?: ""
                     }
 
                     val contactKey = "${contact.name}-${contact.number}"
