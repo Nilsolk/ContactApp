@@ -15,7 +15,7 @@ class ContactManagerImpl(
         return withContext(Dispatchers.IO) {
             val contacts = mutableListOf<Contact>()
             val projection = arrayOf(
-                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER
             )
@@ -24,7 +24,7 @@ class ContactManagerImpl(
                 projection,
                 null, null, null
             )?.use { cursor ->
-                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)
+                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
                 val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                 val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                 while (cursor.moveToNext()) {
@@ -46,7 +46,7 @@ class ContactManagerImpl(
         return withContext(Dispatchers.IO) {
             val uniqueContactsMap = HashMap<String, Contact>()
             val projection = arrayOf(
-                ContactsContract.CommonDataKinds.Phone._ID,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER
             )
@@ -55,7 +55,7 @@ class ContactManagerImpl(
                 projection,
                 null, null, null
             )?.use { cursor ->
-                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone._ID)
+                val idIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)
                 val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
                 val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
 
