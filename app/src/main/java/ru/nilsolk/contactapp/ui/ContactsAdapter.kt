@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import ru.nilsolk.contactapp.data.ContactModel
 import ru.nilsolk.contactapp.databinding.ContactItemBinding
 
@@ -31,6 +32,11 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
         with(holder.viewBinding) {
             number.text = item.number
             name.text = item.name
+            Glide.with(root)
+                .load(item.photoUri.takeIf { it.isNotEmpty() })
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .circleCrop()
+                .into(contactImage)
         }
     }
 

@@ -10,38 +10,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/scrollView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/contactsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/duplicates_button"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/contact_item" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:orientation="vertical"
-                tools:context=".ui.ContactFragment">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/contactsRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/contact_item" />
-            </LinearLayout>
-        </ScrollView>
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/duplicates_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="40dp"
             android:hint="@string/remove_duplicates"
-            android:minWidth="32dp"
-            android:minHeight="32dp"
+            android:minWidth="20dp"
+            android:minHeight="40dp"
             android:textColorHint="@color/white" />
     </RelativeLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

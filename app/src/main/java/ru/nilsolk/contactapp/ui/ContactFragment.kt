@@ -38,19 +38,15 @@ class ContactFragment : Fragment() {
         }
     }
 
-    private fun setupRefresh(){
-        val swipeLayout  = binding.swipeLayout
-        binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
-            swipeLayout.isEnabled = binding.scrollView.scrollY == 0
-        }
+    private fun setupRefresh() {
+        val swipeLayout = binding.swipeLayout
         swipeLayout.setOnRefreshListener {
-            Runnable {
-                viewModel.loadContacts()
-                swipeLayout.isRefreshing = false
-            }.run()
+            viewModel.loadContacts()
+            swipeLayout.isRefreshing = false
         }
 
     }
+
     private fun setupRecyclerView() {
         contactAdapter = ContactsAdapter()
         binding.contactsRecyclerView.apply {

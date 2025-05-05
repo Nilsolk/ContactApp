@@ -1,4 +1,3 @@
-
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -7,6 +6,9 @@ import android.os.IBinder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.nilsolk.contactapp.Contact
 import ru.nilsolk.contactapp.IContactAidlCallback
 import ru.nilsolk.contactapp.IContactAidlInterface
@@ -31,7 +33,6 @@ class ContactViewModel : ViewModel() {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
         }
-
         override fun onRemovedDuplicates(contacts: MutableList<Contact>) {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
@@ -57,8 +58,11 @@ class ContactViewModel : ViewModel() {
             contactService = null
         }
     }
-    fun removeDuplicates(){
-        contactService?.removeDuplicates(callback)
+
+    fun removeDuplicates() {
+        viewModelScope.launch(Dispatchers.IO) {
+            contactService?.removeDuplicates(callback)
+        }
     }
 
     fun bindService(context: Context) {
@@ -72,11 +76,13 @@ class ContactViewModel : ViewModel() {
     }
 
     fun loadContacts() {
-        contactService?.getContacts(callback)
+        viewModelScope.launch(Dispatchers.IO) {
+            contactService?.getContacts(callback)
+        }
     }
 
 
-    companion object{
+    companion object {
         private const val STATUS_NOT_FOUND = "nf"
         private const val STATUS_REMOVED = "removed"
     }

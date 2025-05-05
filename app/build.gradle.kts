@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation (libs.glide)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.activity.ktx)
