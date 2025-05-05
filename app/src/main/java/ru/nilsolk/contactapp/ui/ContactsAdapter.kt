@@ -2,6 +2,7 @@ package ru.nilsolk.contactapp.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.nilsolk.contactapp.data.ContactModel
 import ru.nilsolk.contactapp.databinding.ContactItemBinding
@@ -10,9 +11,11 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
     private val contactList = mutableListOf<ContactModel>()
 
     fun setList(list: List<ContactModel>) {
+        val diffCallback = ContactDiffUtil(contactList, list.sortedBy { it.name })
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
         contactList.clear()
         contactList.addAll(list.sortedBy { it.name })
-        notifyItemChanged(0, list.size)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsHolder {
@@ -33,4 +36,27 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
 
     class ContactsHolder(val viewBinding: ContactItemBinding) :
         RecyclerView.ViewHolder(viewBinding.root)
+}
+
+class ContactDiffUtil(
+    private val oldList: List<ContactModel>,
+    private val newList: List<ContactModel>
+) : DiffUtil.Callback() {
+    override fun getOldListSize(): Int = oldList.size
+
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldContact = oldList[oldItemPosition]
+        val newContact = newList[newItemPosition]
+        return oldContact.number == newContact.number
+                && oldContact.name == newContact.name
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldContact = oldList[oldItemPosition]
+        val newContact = newList[newItemPosition]
+        return oldContact == newContact
+    }
+
 }

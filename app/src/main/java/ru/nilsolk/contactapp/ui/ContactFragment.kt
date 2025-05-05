@@ -35,10 +35,8 @@ class ContactFragment : Fragment() {
 
         binding.duplicatesButton.setOnClickListener {
             viewModel.removeDuplicates()
-            contactAdapter.notifyDataSetChanged()
         }
     }
-
 
     private fun setupRefresh(){
         val swipeLayout  = binding.swipeLayout
@@ -63,7 +61,6 @@ class ContactFragment : Fragment() {
     private fun setupObservers() {
         viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
             contactAdapter.setList(contacts)
-            contactAdapter.notifyDataSetChanged()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
