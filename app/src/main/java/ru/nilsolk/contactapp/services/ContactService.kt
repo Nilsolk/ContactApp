@@ -28,8 +28,9 @@ class ContactService : Service() {
         override fun removeDuplicates(callback: IContactAidlCallback) {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val contactsWithoutDuplicate = (contactManager.removeDuplicates()).first
-                    val countOfRemoved = (contactManager.removeDuplicates()).second
+                    val pair = contactManager.removeDuplicates()
+                    val contactsWithoutDuplicate = pair.first
+                    val countOfRemoved = pair.second
                     if (countOfRemoved!= 0) {
                         callback.onRemovedDuplicates(contactsWithoutDuplicate)
                     } else {

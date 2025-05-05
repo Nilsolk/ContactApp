@@ -14,6 +14,8 @@ class ContactFragment : Fragment() {
     private lateinit var binding: FragmentContactBinding
     private val viewModel: ContactViewModel by viewModels()
     private lateinit var contactAdapter: ContactsAdapter
+    private lateinit var dialogFragment: ContactsResultDialog
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,10 +31,18 @@ class ContactFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupObservers()
+        setupRefresh()
 
         binding.duplicatesButton.setOnClickListener {
             viewModel.removeDuplicates()
-            contactAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun setupRefresh() {
+        val swipeLayout = binding.swipeLayout
+        swipeLayout.setOnRefreshListener {
+            viewModel.loadContacts()
+            swipeLayout.isRefreshing = false
         }
 
     }
@@ -47,24 +57,34 @@ class ContactFragment : Fragment() {
     private fun setupObservers() {
         viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
             contactAdapter.setList(contacts)
-            contactAdapter.notifyDataSetChanged()
-            Toast.makeText(requireContext(), "Success removed duplicates", Toast.LENGTH_SHORT)
-                .show()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+            dialogFragment = ContactsResultDialog(error)
+            dialogFragment.show(childFragmentManager, "")
         }
 
-        viewModel.status.observe(viewLifecycleOwner) { mes ->
-            Toast.makeText(requireContext(), mes, Toast.LENGTH_LONG).show()
+        viewModel.status.observe(viewLifecycleOwner) { status ->
+            val mes = when (status) {
+                STATUS_REMOVED -> "Success removed!"
+                STATUS_NOT_FOUND -> " Duplicates not found!"
+                else -> "Something went wrong!"
+            }
+            dialogFragment = ContactsResultDialog(mes)
+            dialogFragment.show(childFragmentManager, "")
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.unbindService(requireContext())
     }
+
+    companion object {
+        private const val STATUS_NOT_FOUND = "nf"
+        private const val STATUS_REMOVED = "removed"
+    }
+
 
 }
