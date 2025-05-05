@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ru.nilsolk.contactapp.databinding.FragmentContactBinding
@@ -15,7 +14,8 @@ class ContactFragment : Fragment() {
     private lateinit var binding: FragmentContactBinding
     private val viewModel: ContactViewModel by viewModels()
     private lateinit var contactAdapter: ContactsAdapter
-    private lateinit var dialogFragment: CustomDialog
+    private lateinit var dialogFragment: ContactsResultDialog
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,14 +31,28 @@ class ContactFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupObservers()
+        setupRefresh()
 
         binding.duplicatesButton.setOnClickListener {
             viewModel.removeDuplicates()
             contactAdapter.notifyDataSetChanged()
         }
-
     }
 
+
+    private fun setupRefresh(){
+        val swipeLayout  = binding.swipeLayout
+        binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
+            swipeLayout.isEnabled = binding.scrollView.scrollY == 0
+        }
+        swipeLayout.setOnRefreshListener {
+            Runnable {
+                viewModel.loadContacts()
+                swipeLayout.isRefreshing = false
+            }.run()
+        }
+
+    }
     private fun setupRecyclerView() {
         contactAdapter = ContactsAdapter()
         binding.contactsRecyclerView.apply {
@@ -54,7 +68,7 @@ class ContactFragment : Fragment() {
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-            dialogFragment = CustomDialog(error)
+            dialogFragment = ContactsResultDialog(error)
             dialogFragment.show(childFragmentManager, "")
         }
 
@@ -64,8 +78,8 @@ class ContactFragment : Fragment() {
                 STATUS_NOT_FOUND -> " Duplicates not found!"
                 else -> "Something went wrong!"
             }
-            dialogFragment = CustomDialog(mes)
-            dialogFragment.show(childFragmentManager,"")
+            dialogFragment = ContactsResultDialog(mes)
+            dialogFragment.show(childFragmentManager, "")
         }
     }
 

@@ -71,7 +71,7 @@ class ContactViewModel : ViewModel() {
         context.unbindService(serviceConnection)
     }
 
-    private fun loadContacts() {
+    fun loadContacts() {
         contactService?.getContacts(callback)
     }
 
