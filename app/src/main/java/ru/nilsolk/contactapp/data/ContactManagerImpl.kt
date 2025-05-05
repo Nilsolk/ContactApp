@@ -2,6 +2,7 @@ package ru.nilsolk.contactapp.data
 
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.graphics.Bitmap
 import android.provider.ContactsContract
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,7 @@ class ContactManagerImpl(
             val projection = arrayOf(
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
             )
             contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,

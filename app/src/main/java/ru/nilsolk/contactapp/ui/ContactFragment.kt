@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ru.nilsolk.contactapp.databinding.FragmentContactBinding
@@ -14,6 +15,7 @@ class ContactFragment : Fragment() {
     private lateinit var binding: FragmentContactBinding
     private val viewModel: ContactViewModel by viewModels()
     private lateinit var contactAdapter: ContactsAdapter
+    private lateinit var dialogFragment: CustomDialog
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,23 +50,34 @@ class ContactFragment : Fragment() {
         viewModel.contacts.observe(viewLifecycleOwner) { contacts ->
             contactAdapter.setList(contacts)
             contactAdapter.notifyDataSetChanged()
-            Toast.makeText(requireContext(), "Success removed duplicates", Toast.LENGTH_SHORT)
-                .show()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+            dialogFragment = CustomDialog(error)
+            dialogFragment.show(childFragmentManager, "")
         }
 
-        viewModel.status.observe(viewLifecycleOwner) { mes ->
-            Toast.makeText(requireContext(), mes, Toast.LENGTH_LONG).show()
+        viewModel.status.observe(viewLifecycleOwner) { status ->
+            val mes = when (status) {
+                STATUS_REMOVED -> "Success removed!"
+                STATUS_NOT_FOUND -> " Duplicates not found!"
+                else -> "Something went wrong!"
+            }
+            dialogFragment = CustomDialog(mes)
+            dialogFragment.show(childFragmentManager,"")
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.unbindService(requireContext())
     }
+
+    companion object {
+        private const val STATUS_NOT_FOUND = "nf"
+        private const val STATUS_REMOVED = "removed"
+    }
+
 
 }

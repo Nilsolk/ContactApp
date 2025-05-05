@@ -35,12 +35,12 @@ class ContactViewModel : ViewModel() {
         override fun onRemovedDuplicates(contacts: MutableList<Contact>) {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
+            _status.postValue(STATUS_REMOVED)
         }
 
         override fun DuplicatesNotFound() {
-            _status.postValue("Duplicates not found!")
+            _status.postValue(STATUS_NOT_FOUND)
         }
-
 
         override fun onError(error: String) {
             _error.postValue(error)
@@ -73,5 +73,11 @@ class ContactViewModel : ViewModel() {
 
     private fun loadContacts() {
         contactService?.getContacts(callback)
+    }
+
+
+    companion object{
+        private const val STATUS_NOT_FOUND = "nf"
+        private const val STATUS_REMOVED = "removed"
     }
 }
