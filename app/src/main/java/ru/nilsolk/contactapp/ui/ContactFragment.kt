@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import ru.nilsolk.contactapp.R
+import ru.nilsolk.contactapp.data.ContactState
 import ru.nilsolk.contactapp.databinding.FragmentContactBinding
 
 class ContactFragment : Fragment() {
@@ -62,17 +64,17 @@ class ContactFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
             dialogFragment = ContactsResultDialog(error)
-            dialogFragment.show(childFragmentManager, "")
+            dialogFragment.show(childFragmentManager,ContactsResultDialog::class.toString())
         }
 
         viewModel.status.observe(viewLifecycleOwner) { status ->
             val mes = when (status) {
-                STATUS_REMOVED -> "Success removed!"
-                STATUS_NOT_FOUND -> " Duplicates not found!"
-                else -> "Something went wrong!"
+                ContactState.REMOVED.toString() -> getString(R.string.success_removed)
+                ContactState.NOT_FOUND.toString() -> getString(R.string.duplicates_not_found)
+                else -> getString(R.string.something_went_wrong)
             }
             dialogFragment = ContactsResultDialog(mes)
-            dialogFragment.show(childFragmentManager, "")
+            dialogFragment.show(childFragmentManager, ContactsResultDialog::class.toString())
         }
     }
 
@@ -80,11 +82,5 @@ class ContactFragment : Fragment() {
         super.onDestroyView()
         viewModel.unbindService(requireContext())
     }
-
-    companion object {
-        private const val STATUS_NOT_FOUND = "nf"
-        private const val STATUS_REMOVED = "removed"
-    }
-
 
 }

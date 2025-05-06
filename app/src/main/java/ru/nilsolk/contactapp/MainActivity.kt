@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         if (isReadGranted && isWriteGranted) {
             showContactFragment()
         } else {
-            Toast.makeText(this, "Need permissions!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.need_permissions), Toast.LENGTH_LONG).show()
         }
     }
 

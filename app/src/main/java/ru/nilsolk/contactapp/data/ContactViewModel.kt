@@ -13,6 +13,7 @@ import ru.nilsolk.contactapp.Contact
 import ru.nilsolk.contactapp.IContactAidlCallback
 import ru.nilsolk.contactapp.IContactAidlInterface
 import ru.nilsolk.contactapp.data.ContactModel
+import ru.nilsolk.contactapp.data.ContactState
 import ru.nilsolk.contactapp.data.mapper.ContactMapper
 import ru.nilsolk.contactapp.services.ContactService
 
@@ -33,14 +34,15 @@ class ContactViewModel : ViewModel() {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
         }
+
         override fun onRemovedDuplicates(contacts: MutableList<Contact>) {
             val mapper = ContactMapper()
             _contacts.postValue(mapper.mapList(contacts))
-            _status.postValue(STATUS_REMOVED)
+            _status.postValue(ContactState.REMOVED.toString())
         }
 
         override fun DuplicatesNotFound() {
-            _status.postValue(STATUS_NOT_FOUND)
+            _status.postValue(ContactState.NOT_FOUND.toString())
         }
 
         override fun onError(error: String) {
@@ -79,11 +81,5 @@ class ContactViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             contactService?.getContacts(callback)
         }
-    }
-
-
-    companion object {
-        private const val STATUS_NOT_FOUND = "nf"
-        private const val STATUS_REMOVED = "removed"
     }
 }

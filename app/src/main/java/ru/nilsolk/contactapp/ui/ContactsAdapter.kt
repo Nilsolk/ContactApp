@@ -32,11 +32,18 @@ class ContactsAdapter : RecyclerView.Adapter<ContactsAdapter.ContactsHolder>() {
         with(holder.viewBinding) {
             number.text = item.number
             name.text = item.name
-            Glide.with(root)
-                .load(item.photoUri.takeIf { it.isNotEmpty() })
-                .placeholder(android.R.drawable.ic_menu_gallery)
-                .circleCrop()
-                .into(contactImage)
+            if (item.photoUri.isNotEmpty()) {
+                Glide.with(root)
+                    .load(item.photoUri)
+                    .placeholder(android.R.drawable.ic_menu_myplaces)
+                    .circleCrop()
+                    .into(contactImage)
+            } else {
+                Glide.with(root)
+                    .load(android.R.drawable.ic_menu_myplaces)
+                    .circleCrop()
+                    .into(contactImage)
+            }
         }
     }
 
